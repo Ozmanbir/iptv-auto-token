@@ -1,1 +1,1 @@
-web: python ana.py
+web: python main.py
