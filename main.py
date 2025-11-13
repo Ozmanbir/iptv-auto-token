@@ -1,22 +1,30 @@
-from flask import Flask,Response
-import requests,re,os
-app=Flask(__name__)
-@app.route('/list.m3u')
-def playlist():
+import re
+import requests
+from flask import Flask, Response
+
+app = Flask(__name__)
+
+@app.route("/list.m3u")
+def serve_m3u():
     try:
-        html=requests.get("https://catcast.tv/player/49918",timeout=10).text
-        match=re.search(r"https://s\.catcast\.tv/content/\d+/index\.m3u8\?token=[a-z0-9]+",html)
-        if match:
-            stream=match.group(0)
-        else:
-            stream="https://catcast.tv/tv-zle"
-        m3u="#EXTM3U\n#EXTINF:-1 tvg-name=\"Catcast TV\" group-title=\"IPTV\",Catcast TV\n"+stream+"\n"
-        return Response(m3u,mimetype='audio/x-mpegurl')
+        # Catcast player sayfası
+        url = "https://catcast.tv/player/49918"
+        html = requests.get(url, timeout=10).text
+
+        # Token yakalama
+        match = re.search(r'token=([a-f0-9]{32})', html)
+        if not match:
+            return Response("# Token bulunamadı", mimetype="audio/mpegurl")
+
+        token = match.group(1)
+        stream_url = f"https://s.catcast.tv/content/49918/index.m3u8?token={token}"
+
+        # M3U içeriği oluştur
+        m3u_content = f"#EXTM3U\n#EXTINF:-1, tv-izle\n{stream_url}\n"
+        return Response(m3u_content, mimetype="audio/mpegurl")
+
     except Exception as e:
-        return Response("#EXTM3U\n#EXTINF:-1,Error\nError:"+str(e)+"\n",mimetype='audio/x-mpegurl')
-@app.route('/')
-def index():
-    return "✅ IPTV M3U aktif! <a href='/list.m3u'>Listeyi indir</a>"
-if __name__=='__main__':
-    port=int(os.environ.get('PORT',5000))
-    app.run(host='0.0.0.0',port=port)
+        return Response(f"# Hata: {e}", mimetype="audio/mpegurl")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
