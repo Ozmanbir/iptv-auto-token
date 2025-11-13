@@ -5,11 +5,18 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "✅ IPTV yönlendirme aktif!<br>Oynatıcı linki: <a href='/live'>/live</a>"
+    return "✅ IPTV yönlendirme aktif!<br>Oynatıcı linkleri:<br><a href='/live1'>/live1</a><br><a href='/live2'>/live2</a>"
 
-@app.route('/live')
-def live():
+@app.route('/live1')
+def live1():
+    # Catcast yayını
     token_url = "https://s.catcast.tv/content/49918/index.m3u8?token=b13e2ae89c49fb4132e0622f19419604"
+    return redirect(token_url, code=302)
+
+@app.route('/live2')
+def live2():
+    # Diğer tokenli yayın
+    token_url = "https://dc34a9483e0f144e9e.pages.dev/cefc8a875b06cc6da16ca7dd99157dee/DmodYM9CdSNPUZyc2x7VWd/5062/dc34a9483e0f144e9e.pages.dev/chunklist_hd.m3u8?verify=1763016750936~213.238.187.84~bd14cdaa057f57353a74ee68d0a7a394"
     return redirect(token_url, code=302)
 
 if __name__ == '__main__':
