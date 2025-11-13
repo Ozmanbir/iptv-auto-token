@@ -9,7 +9,7 @@ def index():
 
 @app.route('/live')
 def live():
-    token_url = "https://catcast.tv/player/49918"
+    token_url = "https://s.catcast.tv/content/49918/index.m3u8?token=4e99c5e9908effbd756de29c54628131"
     return redirect(token_url, code=302)
 
 if __name__ == '__main__':
